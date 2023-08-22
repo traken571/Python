@@ -1,0 +1,80 @@
+import pandas as pd
+
+df = pd.read_excel(r"C:\Users\khoat\Downloads\Customer Call List.xlsx")
+df
+
+#remove duplicates
+df = df.drop_duplicates() 
+df
+
+#remove not useful columns
+df = df.drop(columns = "Not_Useful_Column")
+df
+
+#Remove Uncessary Characters from Last_Name (clean up last_name)
+df["Last_Name"].str.strip("._/")
+df["Last_Name"]=df["Last_Name"].str.strip("._/")
+df
+
+#Replace anything that is not A to Z or 0 to 9 with Nothing or Removing anything that is not Letters or Numbers
+df["Phone_Number"].str.replace('[^a-zA-Z0-9]','')
+
+df["Phone_Number"]=df["Phone_Number"].str.replace('[^a-zA-Z0-9]','')
+df
+
+#Format Phone_number column into a str
+df["Phone_Number"]=df["Phone_Number"].apply(lambda x: str(x))
+#Format Phone_number from 1234567890 to 123-456-7890
+df["Phone_Number"]=df["Phone_Number"].apply(lambda x: x[0:3] + '-' + x[3:6] + '-' + x[6:10])
+
+df
+
+# clean up Phone Numbers that are nan-- and Na-- with Blank ''
+df["Phone_Number"]=df["Phone_Number"].str.replace('nan--|Na--','')
+df
+
+# Clean Address Column, splt the address into street, state, and zipcode
+df[["Street_Address","State","Zip_Code"]]=df["Address"].str.split(',',2, expand=True)
+df
+
+#Format Paying Customer into the same format
+df["Paying Customer"]=df["Paying Customer"].str.replace("Yes","Y")
+df["Paying Customer"]=df["Paying Customer"].str.replace("No","N")
+df
+
+#Format Do_Not_Contact into the same format
+df["Do_Not_Contact"]=df["Do_Not_Contact"].str.replace("Yes","Y")
+df["Do_Not_Contact"]=df["Do_Not_Contact"].str.replace("No","N")
+df
+
+#Get rid of N/A, NaN, None. These have no value, we are using this to fill them with Blank
+df=df.fillna('')
+df
+
+#N/A was left, replace it with blank ''
+df=df.replace('N/a','')
+
+df
+
+#Employer only wants us to give them a list that they can call
+#Remove People that don't have phone numbers & Y for Do_Not_Contact
+
+for x in df.index:
+    if df.loc[x,"Do_Not_Contact"] == 'Y':
+        df.drop(x, inplace=True)
+df
+
+for x in df.index:
+    if df.loc[x,"Phone_Number"] == '':
+        df.drop(x, inplace=True)
+df
+
+#Reset Index, drop=True drops the original index 
+df=df.reset_index(drop=True)
+df
+
+#Export results into excel file to send to Client (will go to desktop)
+excel_file_path = 'Final_List_Of_Customers.xlsx'
+df.to_excel(excel_file_path, index=False) 
+print(f"Results have been written to {excel_file_path}")
+
