@@ -1,0 +1,21 @@
+import pandas as pd
+
+# Read HTML tables from the URL
+df = pd.read_html('https://en.wikipedia.org/wiki/List_of_The_Simpsons_episodes_(seasons_1%E2%80%9320)#Season_1_(1989%E2%80%9390)')
+
+#Drop multiple columns 
+columns_to_drop = ["Title", "No. overall","No. in season","Original air date","Prod. code"]
+df = df[1].drop(columns = columns_to_drop)
+
+#Combine all columns respectivley to their column name
+merged_column2 = pd.concat(df, ignore_index=True)
+merged_column2
+
+# Remove rows with no values
+merged_column2 = merged_column2.dropna()
+merged_column2
+
+#Export results into excel file
+excel_file_path = 'Simpsons.xlsx'
+merged_column2.to_excel(excel_file_path, index=False) 
+print(f"Results have been written to {excel_file_path}")
