@@ -3,17 +3,26 @@ import pandas as pd
 # Read HTML tables from the URL
 df = pd.read_html('https://en.wikipedia.org/wiki/List_of_The_Simpsons_episodes_(seasons_1%E2%80%9320)#Season_1_(1989%E2%80%9390)')
 
-#Drop multiple columns 
-columns_to_drop = ["Title", "No. overall","No. in season","Original air date","Prod. code"]
-df = df[1].drop(columns = columns_to_drop)
+# View & Select tables 1 to 18 and table 20
+df = df[1:19] + [df[20]]
+df
 
-#Combine all columns respectivley to their column name
+#Combine all columns respectively to their column name
 merged_column2 = pd.concat(df, ignore_index=True)
 merged_column2
+
+#Combine selected tables columns
+selcted_tables = pd.concat([df[1], df[2]], ignore_index=True)
 
 # Remove rows with no values
 merged_column2 = merged_column2.dropna()
 merged_column2
+
+#Drop multiple columns 
+columns_to_drop = ["Title", "No. overall", "No. in season", "Original air date", "Prod. code"]
+df = merged_column2.drop(columns = columns_to_drop)
+
+
 
 #Export results into excel file
 excel_file_path = 'Simpsons.xlsx'
