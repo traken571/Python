@@ -3,7 +3,7 @@ import pandas as pd
 # Read HTML tables from the URL
 df = pd.read_html('https://en.wikipedia.org/wiki/List_of_The_Simpsons_episodes_(seasons_1%E2%80%9320)#Season_1_(1989%E2%80%9390)')
 
-# View & Select tables 1 to 18 and table 20
+# View & Select tables 1 to 18 and table 20. Had to leave out Table 19 because the columns didn't match.
 df = df[1:19] + [df[20]]
 df
 
@@ -14,17 +14,23 @@ merged_column2
 #Combine selected tables columns
 selcted_tables = pd.concat([df[1], df[2]], ignore_index=True)
 
+#Cleaning US viewers (millions) by removing the unnecessary [#] that was right of the values
+merged_column2['U.S. viewers (millions)'] = merged_column2['U.S. viewers (millions)'].str.replace(r'\[\d+\]', '')
+
+
 # Remove rows with no values
 merged_column2 = merged_column2.dropna()
 merged_column2
 
-#Drop multiple columns 
-columns_to_drop = ["Title", "No. overall", "No. in season", "Original air date", "Prod. code"]
+#Drop multiple unnecessary columns 
+columns_to_drop = ["No. overall", "No. in season", "Original air date", "Prod. code"]
 df = merged_column2.drop(columns = columns_to_drop)
 
 
 
-#Export results into excel file
+#Export results into an Excel file
 excel_file_path = 'Simpsons.xlsx'
 merged_column2.to_excel(excel_file_path, index=False) 
 print(f"Results have been written to {excel_file_path}")
+
+Excel File should export 455 rows × 4 columns
